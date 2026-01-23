@@ -17,28 +17,49 @@ struct FavoritesView: View {
     
     let layout = [GridItem(.flexible()), GridItem(.flexible())]
     
+    /* Next Requirements:
+     - Apply button to actually apply the filters
+     - Clear button that removes the filters (and applied it)
+     */
+    
     //computed property
     private var favoriteBooks: [Binding<Book>] {
         $books.filter{
-            $0.wrappedValue.isFavorite
             // $0 = binding to the book
             // .wrappedValue = the actual book
             // .isFavorite = property isFavorite of the book
+            $0.wrappedValue.isFavorite
+            && (
+               selectedGenre == nil
+               || $0.wrappedValue.genre == selectedGenre
+            )
+            && (
+                selectedReadingStatus == nil
+                || $0.wrappedValue.readingStatus == selectedReadingStatus
+            )
         }
     }
     
     var body: some View {
         NavigationStack{
-            HStack{
-//                Text("Filters applied:")
-                if(selectedGenre != nil){
-                    Text("Genre: \(selectedGenre!.rawValue)")
-                }
-                if(selectedReadingStatus != nil){
-                    Text("Status: \(selectedReadingStatus!.rawValue)")
-                }
-            }
             ScrollView {
+                HStack{
+                    //                Text("Filters applied:")
+                    if(selectedGenre != nil){
+                        Text("Genre: \(selectedGenre!.rawValue)")
+                            .foregroundColor(.secondary)
+                        Button("X"){
+                            selectedGenre=nil
+                        }
+                    }
+                    if(selectedReadingStatus != nil){
+                        Text("Status: \(selectedReadingStatus!.rawValue)")
+                            .foregroundColor(.secondary)
+                        Button("X"){
+                            selectedReadingStatus=nil
+                        }
+                    }
+                }
                 LazyVGrid(columns: layout){
                     ForEach(favoriteBooks, id:\.self.wrappedValue.id){ book in
                         NavigationLink(destination: BookDetailView(book: book)){
