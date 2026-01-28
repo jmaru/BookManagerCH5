@@ -6,23 +6,32 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct BookDetailView: View {
-    @Binding var book: Book
+    var book: PersistentBook
 
-    @State var showEditSheet: Bool = false
-
+    @State private var showEditSheet: Bool = false
+    @State private var isFavorite: Bool
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    init(book: PersistentBook) {
+        self.book = book
+        isFavorite = book.isFavorite
+    }
+    
     var body: some View {
         
         ScrollView{
             VStack(alignment: .leading) {
                 HStack {
                     //Image
-                    Image(book.cover) //Image("lotr_fellowship")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 100, height: 150)
-                        .padding(.vertical,20)
+//                    Image(book.cover) //Image("lotr_fellowship")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 100, height: 150)
+//                        .padding(.vertical,20)
                     VStack{
                         //Title
                         Text(book.title)
@@ -36,7 +45,11 @@ struct BookDetailView: View {
                             CustomCapsule(text: book.genre.rawValue)
                             CustomCapsule(text: book.readingStatus.rawValue, color: .red)
                             //Favorite toggle
-                            FavoriteToggle(isFavorite:$book.isFavorite)
+                            FavoriteToggle(isFavorite:$isFavorite)
+                                .onChange(of: isFavorite) { _,newValue in
+                                    book.isFavorite = newValue
+                                    try? modelContext.save()
+                                }
                         }
                     }
                 }
@@ -57,7 +70,7 @@ struct BookDetailView: View {
             showEditSheet.toggle()
         })
         .sheet(isPresented: $showEditSheet) {
-            AddEditView(book: $book)
+            AddEditView(book: book)
         }
     }
 }

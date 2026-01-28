@@ -6,18 +6,18 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct BookListView: View {
-    @Binding var books: [Book]
+    @Query var books: [PersistentBook]
     @State var showAddSheet: Bool = false
-    @State var newBook: Book = Book(title:"")
     
     var body: some View {
         // book: copy of the wrapped value
         // $book: the actual binding to the book
         NavigationStack{
-            List($books, id: \.self.id){ $book in
-                NavigationLink(destination: BookDetailView(book: $book)){
+            List(books, id: \.self.id){ book in
+                NavigationLink(destination: BookDetailView(book: book)){
                     //List item
                     BookListItem(book: book)
                 }
@@ -26,15 +26,8 @@ struct BookListView: View {
             .navigationBarItems(trailing: Button("Add"){
                 showAddSheet.toggle()
             })
-            .sheet(isPresented: $showAddSheet)
-            { //onDismiss
-                if(!newBook.title.isEmpty){
-                    books.append(newBook)
-                }
-                newBook = Book(title: "")
-            }
-            content:{
-                AddEditView(book: $newBook)
+            .sheet(isPresented: $showAddSheet){
+                AddEditView()
             }
         }
     }

@@ -6,36 +6,71 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddEditView: View {
     
-    @Binding var book: Book
-    @State var workingBook: Book
+    var book: PersistentBook?
+//    @State var workingBook: Book
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) var modelContext
     
-    init(book: Binding<Book>) {
-        _book = book
-        _workingBook = .init(initialValue: book.wrappedValue)
+    @State private var title: String
+    @State private var author: String
+    @State private var genre: Genre
+    @State private var readingStatus: ReadingStatus
+    @State private var details: String
+    @State private var rating: Int
+    @State private var review: String
+    
+    private var viewTitle: String
+    // closure
+    init(book: PersistentBook? = nil) {
+        self.book = book
+        print(book?.title ?? "no book")
+        if let book {
+            print("Is getting here?")
+            self.title = book.title
+            self.author = book.author
+            self.genre = book.genre
+            self.readingStatus = book.readingStatus
+            self.details = book.details
+            self.rating = book.rating
+            self.review = book.review
+            viewTitle="Edit book"
+        } else {
+            self.title = ""
+            self.author = ""
+            self.genre = .unknown
+            self.readingStatus = .unknown
+            self.details = ""
+            self.rating = 0
+            self.review = ""
+            viewTitle="Add new book"
+        }
+        print("title")
+        print(self.title)
+//        _workingBook = .init(initialValue: book.wrappedValue)
     }
 
     var body: some View {
         NavigationStack{
             Form {
                 Section(header: Text("Book details")){
-                    TextField("Title of the book", text: $workingBook.title)
-                    TextField("Author", text: $workingBook.author)
-                    Picker("Genre", selection: $workingBook.genre){
+                    TextField("Title of the book", text: $title)
+                    TextField("Author", text: $author)
+                    Picker("Genre", selection: $genre){
                         ForEach(Genre.allCases, id: \.self) { genre in
                             Text(genre.rawValue).tag(genre)
                         }
                     }
                     
-                    Picker("Reading Status", selection: $workingBook.readingStatus){
+                    Picker("Reading Status", selection: $readingStatus){
                         ForEach(ReadingStatus.allCases, id: \.self) { status in
                             Text(status.rawValue).tag(status)
                         }
                     }
-                    TextEditor(text: $workingBook.details)
+                    TextEditor(text: $details)
                         .frame(height: 150)
                 }
                 Section(header: Text("Book review")){
@@ -45,27 +80,40 @@ struct AddEditView: View {
 //                            Text("\($0) stars").tag($0)
 //                        }
 //                    }
-                    StarRatingField(rating: $workingBook.rating)
-                    TextEditor(text: $workingBook.review)
+                    StarRatingField(rating: $rating)
+                    TextEditor(text: $review)
                         .frame(height: 150)
                 }
             }
-            .navigationTitle("Add/Edit Book")
+            .navigationTitle(viewTitle)
             .toolbar{
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         //Saving the values into the actual book
-                        book.title = workingBook.title
-                        book.author = workingBook.author
-                        book.details = workingBook.details
-                        book.genre = workingBook.genre
-                        book.readingStatus = workingBook.readingStatus
+                        let isNewBook = book == nil
+                        //If we don't have a book, we create one (Add Book)
+                        let bookToSave = book ?? PersistentBook(title:"")
+                        bookToSave.title = title
+                        bookToSave.author = author
+                        bookToSave.details = details
+                        bookToSave.genre = genre
+                        bookToSave.readingStatus = readingStatus
                         //Review lines added
-                        book.rating = workingBook.rating
-                        book.review = workingBook.review
+                        bookToSave.rating = rating
+                        bookToSave.review = review
+                        
+                        if isNewBook {
+                            modelContext.insert(bookToSave)
+                        }
+                        
+                        do {
+                            try modelContext.save()
+                        } catch {
+                            print("Failed to save the book: \(error)")
+                        }
                         // dismiss the sheet containing Add/Edit view
                         dismiss()
-                    }.disabled(workingBook.title.isEmpty)
+                    }.disabled(title.isEmpty)
                 }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {

@@ -9,21 +9,28 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State var books = getBooks()
+    @AppStorage(SETTING_THEME_KEY) private var currentTheme: Theme = .system
+//    @State var books = getBooks()
     
     var body: some View {
         TabView{
             //Book list view
-            BookListView(books: $books)
+            BookListView()
                 .tabItem{
                     Label("Books", systemImage: "books.vertical.fill")
                 }
             // Favorites view
-            FavoritesView(books: $books)
-                .tabItem{
-                    Label("Favorites", systemImage: "heart.fill")
+//            FavoritesView()
+//                .tabItem{
+//                    Label("Favorites", systemImage: "heart.fill")
+//                }
+            // Settings View
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
                 }
         }
+        .preferredColorScheme(currentTheme.colorScheme())
     }
 
 }

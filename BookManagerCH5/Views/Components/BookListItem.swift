@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct BookListItem: View {
-    let book: Book
+    let book: PersistentBook
     
     var body: some View {
         HStack(){
-            Image(book.cover)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: 60, maxHeight: 60)
+//            Image(book.cover)
+//                .resizable()
+//                .scaledToFit()
+//                .frame(maxWidth: 60, maxHeight: 60)
             VStack(alignment: .leading){
                 Text(book.title)
                     .lineLimit(1)
