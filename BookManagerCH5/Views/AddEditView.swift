@@ -22,6 +22,7 @@ struct AddEditView: View {
     @State private var details: String
     @State private var rating: Int
     @State private var review: String
+    @State private var coverUI: UIImage?
     
     private var viewTitle: String
     // closure
@@ -38,6 +39,9 @@ struct AddEditView: View {
             self.rating = book.rating
             self.review = book.review
             viewTitle="Edit book"
+            if let coverData = book.cover {
+                self.coverUI = UIImage(data: coverData)
+            }
         } else {
             self.title = ""
             self.author = ""
@@ -47,6 +51,7 @@ struct AddEditView: View {
             self.rating = 0
             self.review = ""
             viewTitle="Add new book"
+            self.coverUI = nil
         }
         print("title")
         print(self.title)
@@ -56,6 +61,9 @@ struct AddEditView: View {
     var body: some View {
         NavigationStack{
             Form {
+                Section(header: Text("Book cover")){
+                    ImagePicker(image: $coverUI)
+                }
                 Section(header: Text("Book details")){
                     TextField("Title of the book", text: $title)
                     TextField("Author", text: $author)
@@ -101,6 +109,9 @@ struct AddEditView: View {
                         //Review lines added
                         bookToSave.rating = rating
                         bookToSave.review = review
+                        if(coverUI != nil){
+                            bookToSave.cover = coverUI?.jpegData(compressionQuality: 0.8)
+                        }
                         
                         if isNewBook {
                             modelContext.insert(bookToSave)

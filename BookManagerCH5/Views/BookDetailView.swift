@@ -27,11 +27,11 @@ struct BookDetailView: View {
             VStack(alignment: .leading) {
                 HStack {
                     //Image
-//                    Image(book.cover) //Image("lotr_fellowship")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 100, height: 150)
-//                        .padding(.vertical,20)
+                    Image(uiImage: (book.cover != nil ? UIImage(data:book.cover!) : UIImage(resource: .defaultBookCover))!)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 150)
+                        .padding(.vertical,20)
                     VStack{
                         //Title
                         Text(book.title)

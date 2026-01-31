@@ -20,3 +20,4 @@ struct Book: Hashable {
     
     var isFavorite: Bool = false
 }
+

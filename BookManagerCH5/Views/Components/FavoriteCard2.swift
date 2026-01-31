@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FavoriteCard2: View {
-    let book: Book
+    let book: PersistentBook
     
     var body: some View {
         VStack{
@@ -39,7 +39,7 @@ struct FavoriteCard2: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background{
-            Image(book.cover)
+            Image(uiImage: (book.cover != nil ? UIImage(data: book.cover!)! : UIImage(resource: .defaultBookCover)))
                 .resizable()
                 .scaledToFill()
         }
