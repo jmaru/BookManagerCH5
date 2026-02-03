@@ -11,6 +11,7 @@ import SwiftData
 struct BookListView: View {
     @Query var books: [PersistentBook]
     @State var showAddSheet: Bool = false
+    @Environment(\.modelContext) private var modelContext: ModelContext
     
     var body: some View {
         // book: copy of the wrapped value
@@ -27,7 +28,7 @@ struct BookListView: View {
                 showAddSheet.toggle()
             })
             .sheet(isPresented: $showAddSheet){
-                AddEditView()
+                AddEditView(modelContext: modelContext)
             }
         }
     }

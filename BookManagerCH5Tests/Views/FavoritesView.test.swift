@@ -76,9 +76,9 @@ struct FavoritesViewTests {
         #expect(filteredBooks3.count == 1)
         #expect(filteredBooks3.first?.title == "Book 4")
         
-        //act III
+        //act IV
         let filteredBooks4 = filterFavoriteBooks(books: books, genre: .dystopian)
-        //assert III
+        //assert IV
         #expect(filteredBooks4.count == 0)
     }
     

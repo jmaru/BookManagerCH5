@@ -34,7 +34,7 @@ struct BookDetailView: View {
                         .padding(.vertical,20)
                     VStack{
                         //Title
-                        Text(book.title)
+                        Text(book.title.uppercased())
                             .font(.largeTitle)
                         // by author
                         Text("by \(book.author)")
@@ -70,7 +70,7 @@ struct BookDetailView: View {
             showEditSheet.toggle()
         })
         .sheet(isPresented: $showEditSheet) {
-            AddEditView(book: book)
+            AddEditView(book: book, modelContext: modelContext)
         }
     }
 }

@@ -24,6 +24,8 @@ struct PersistentBookTests {
         #expect(book.title == "Test Book")
         #expect(book.author == "Jane Doe")
         #expect(book.rating == defaultRating)
+        
+        //
     }
     
 }
