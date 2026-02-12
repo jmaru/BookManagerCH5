@@ -23,7 +23,7 @@ struct BookManagerCH5App: App {
         do{
             modelContainer = try ModelContainer(
                 for:
-                    PersistentBook.self
+                    PersistentBook.self,
             )
         } catch {
             fatalError("Failed to load the model container")

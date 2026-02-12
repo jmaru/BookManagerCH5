@@ -24,9 +24,12 @@ struct BookListView: View {
                 }
             }
             .navigationTitle(Text("Book Manager"))
-            .navigationBarItems(trailing: Button("Add"){
-                showAddSheet.toggle()
-            })
+            .navigationBarItems(trailing:
+                Button("Add"){
+                    showAddSheet.toggle()
+                }
+                .accessibilityLabel("Add Book")
+            )
             .sheet(isPresented: $showAddSheet){
                 AddEditView(modelContext: modelContext)
             }
